@@ -1,5 +1,5 @@
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
 const cors = require('cors')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port =process.env.PORT || 3000;
@@ -15,8 +15,9 @@ app.get('/', (req, res) => {
 // Jo2ok9bmL2ofqRCS
 
 const uri = "mongodb+srv://Assignment:Jo2ok9bmL2ofqRCS@cluster0.2rfkb4j.mongodb.net/?appName=Cluster0";
-
+// const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.2rfkb4j.mongodb.net/?appName=Cluster0`;
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
+
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -26,6 +27,7 @@ const client = new MongoClient(uri, {
 });
 
 const db=client.db('data');
+// const db=client.db('smart_db');
 const productCollection = db.collection('products');
 
 app.post('/products',async(req,res)=>{
@@ -34,6 +36,12 @@ app.post('/products',async(req,res)=>{
     res.send(result);
 })
 
+app.get('/products',async(res,req)=>{
+    const projectsCollection={category:6,name:6,price:6,image:6,location:6,button:6}
+    const cursor =productCollection.find().limit(6).project();
+    const result= await cursor.toArray();
+    res.send(result);
+})
 app.delete('/products/:id',async(req,res)=>{
     const id = req.params.id;
     const query ={_id: new ObjectId(id)}
