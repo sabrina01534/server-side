@@ -1,8 +1,8 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const port = 3000
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const port =process.env.PORT || 3000;
 
 app.use(cors())
 app.use(express.json())
@@ -25,20 +25,37 @@ const client = new MongoClient(uri, {
   }
 });
 
-async function run() {
-  try {
+const db=client.db('data');
+const productCollection = db.collection('products');
+
+app.post('/products',async(req,res)=>{
+    const newProduct = req.body;
+    const result=await productCollection.insertOne(newProduct);
+    res.send(result);
+})
+
+app.delete('/products/:id',async(req,res)=>{
+    const id = req.params.id;
+    const query ={_id: new ObjectId(id)}
+    const result =await productCollection.deleteOne(query);
+    res.send(result);
+})
+
+// async function run() {
+//   try {
    
     // await client.connect();
    
     // await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
+   
+//   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
-  }
-}
-run().catch(console.dir);
+//   }
+// }
+// run().catch(console.dir);
 
+ console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`)
