@@ -49,6 +49,19 @@ app.delete('/products/:id',async(req,res)=>{
     res.send(result);
 })
 
+// bids related apis
+app.get ('/bids',async(req,res)=>{
+    const email = req.query.email;
+    const query={};
+    if(email){
+        query.bidder_email=email;
+    }
+  const cursor=bidsCollection.find();
+  const result=await cursor.toArray();
+  res.send(result);
+})
+
+
 // async function run() {
 //   try {
    
